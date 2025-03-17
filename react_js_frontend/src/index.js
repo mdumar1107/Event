@@ -16,7 +16,8 @@ import Dashboard from './Components/Dashboard'; // Import the Dashboard componen
 import DashMessages from './Components/DashMessages'; // Import the Dashboard Messages component
 import DashProfile from './Components/DashProfile'; // Import the Dashboard profile component
 import DashEvents from './Components/DashEvents'; // Import the Dashboard component
-
+import ForgotPassword from './Components/ForgotPassword';
+import ResetPassword from   './Components/ResetPassword';
 
 import reportWebVitals from './reportWebVitals';
 
@@ -42,6 +43,8 @@ root.render(
         <Route path="/dash-messages" element={<DashMessages />} />
         <Route path="/dash-profile" element={<DashProfile />} />
         <Route path="/dash-events" element={<DashEvents />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
     </Router>
   </React.StrictMode>

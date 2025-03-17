@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
-
+import { useNavigate, Link } from "react-router-dom";
 
 const HomePage = () => {
-  // State to store fetched events
   const [events, setEvents] = useState([]);
-  // State to store fetched blogs
   const [blogs, setBlogs] = useState([]);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate API call to fetch events
     setEvents([
-      { id: 1, title: "Tech Conference 2025"},
+      { id: 1, title: "Tech Conference 2025" },
       { id: 2, title: "Music Festival" },
       { id: 3, title: "Startup Meetup" },
       { id: 4, title: "Startup Meetup" },
@@ -21,7 +19,6 @@ const HomePage = () => {
       { id: 6, title: "Startup Meetup" }
     ]);
 
-    // Simulate API call to fetch blogs
     setBlogs([
       { id: 1, title: "How to Organize an Event" },
       { id: 2, title: "Top 10 Event Planning Tips" },
@@ -29,19 +26,58 @@ const HomePage = () => {
     ]);
   }, []);
 
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    if (loggedInUser) {
+      setUser(loggedInUser);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/");
+  };
+
   return (
     <div className="font-sans bg-background">
       {/* Header Section */}
-      <div className="w-full h-[49px] mx-auto flex justify-between items-center ">
-      <header className="w-[1200px] h-[49px] mx-auto flex justify-between items-center p-0 bg-background mt-6">
-        <h1 className=" text-3xl font-bold">
-          Event <span className="text-primary">Hive</span></h1>
-        <div>
-          <button onClick={() => window.location.href='/Login'} className="mr-4 text-black px-6 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-200">Login </button>
-          <button onClick={() => window.location.href='/signup'} className="bg-primary text-white px-6 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-200">Signup</button>
-        </div>
-      </header>
-      </div>
+<div className="w-full h-[49px] mx-auto flex justify-between items-center">
+  <header className="w-[1200px] h-[49px] mx-auto flex justify-between items-center p-0 bg-background mt-6">
+    <h1 className="text-3xl font-bold">
+      Event <span className="text-primary">Hive</span>
+    </h1>
+    <div>
+      {user ? (
+        <>
+          <span className="mr-4 text-lg font-semibold text-gray-700">{user.name}</span>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 sm:text-[16px] text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-red-600"
+          >
+            Logout
+          </button>
+        </>
+      ) : (
+        <>
+          <button
+            onClick={() => navigate("/login")}
+            className="mr-2 sm:text-[16px] sm:mr-4 font-sans text-black px-4 sm:px-6 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-200"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => navigate("/signup")}
+            className="bg-primary sm:text-[16px] font-sans text-white px-4 sm:px-6 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-200"
+          >
+            Signup
+          </button>
+        </>
+      )}
+    </div>
+  </header>
+</div>
+
       {/* Hero Section */}
       <div className="w-full flex justify-center items-center mt-6">
         <section 
