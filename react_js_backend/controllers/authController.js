@@ -2,6 +2,8 @@ import User from '../models/user.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
+import crypto from 'crypto';
+import sendEmail from '../helpers/sendEmail.js';
 
 const handleError = (res, status, message) => {
     return res.status(status).json({ message });
@@ -36,12 +38,10 @@ export const signup = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        console.log("Generated Hashed Password:", hashedPassword); // Debugging output
-
         user = new User({ name, email, password: hashedPassword });
         await user.save();
 
-        res.status(201).json({ message: 'User registered successfully', hashedPassword });
+        res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         console.error(error);
         handleError(res, 500, 'Internal server error');
@@ -63,7 +63,7 @@ export const login = async (req, res) => {
             return handleError(res, 400, 'Invalid email format');
         }
 
-        const user = await User.findOne({ email }).select('+password'); // Ensure password is retrieved
+        const user = await User.findOne({ email }).select('+password');
         if (!user) {
             return handleError(res, 400, 'Invalid credentials');
         }
@@ -79,7 +79,7 @@ export const login = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge: 86400 * 1000 
+            maxAge: 86400 * 1000
         });
 
         res.json({ 
@@ -90,5 +90,92 @@ export const login = async (req, res) => {
     } catch (error) {
         console.error("Login Error:", error);
         handleError(res, 500, 'Internal server error');
+    }
+};
+
+// Get User Details (from token)
+export const getUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return handleError(res, 404, 'User not found');
+        }
+        res.json({ user });
+    } catch (error) {
+        console.error("Get User Error:", error);
+        handleError(res, 500, 'Internal server error');
+    }
+};
+
+// Logout User (Clears cookie)
+export const logout = (req, res) => {
+    res.cookie('token', '', { expires: new Date(0), httpOnly: true, sameSite: 'strict' });
+    res.json({ message: 'Logged out successfully' });
+};
+
+export const forgotPassword = async (req, res) => {
+    try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      const resetToken = crypto.randomBytes(32).toString("hex");
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpires = Date.now() + 3600000; // 1-hour expiration
+      await user.save();
+  
+      const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
+      const message = `Click the link below to reset your password:\n\n${resetURL}`;
+  
+      await sendEmail(user.email, "Password Reset Request", message);
+  
+      res.json({ message: "Password reset link sent to your email" });
+    } catch (error) {
+      console.error("Forgot Password Error:", error.message);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+
+// ✅ Reset Password Controller
+export const resetPassword = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { newPassword, confirmNewPassword } = req.body;
+
+        if (!newPassword || !confirmNewPassword) {
+            return handleError(res, 400, "All fields are required");
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            return handleError(res, 400, "Passwords do not match");
+        }
+
+        // 🔹 Find user with valid token
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() } // Ensure token is still valid
+        }).select("+password");
+
+        if (!user) {
+            return handleError(res, 400, "Invalid or expired token");
+        }
+
+        // ✅ Hash new password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+
+        // 🔹 Clear reset token fields
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+
+        res.json({ message: "Password reset successful. You can now log in." });
+    } catch (error) {
+        console.error("Reset Password Error:", error);
+        handleError(res, 500, "Server error");
     }
 };
