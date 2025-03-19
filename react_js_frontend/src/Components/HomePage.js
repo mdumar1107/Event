@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { FaSearch, FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 
 const HomePage = () => {
-  //const [events, setEvents] = useState([]);
-  //const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
+  const [events, setEvents] = useState([]); // Store fetched events
+  const [visibleEvents, setVisibleEvents] = useState(6); // Initially show 6 events
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,6 +15,19 @@ const HomePage = () => {
     if (loggedInUser) {
       setUser(loggedInUser);
     }
+
+    // Fetch upcoming events from backend
+    axios.get("http://localhost:5000/api/events")
+  .then((response) => {
+    const sortedEvents = response.data.sort((a, b) => {
+      const dateA = new Date(`${a.startDate.year}-${a.startDate.month}-${a.startDate.day}`);
+      const dateB = new Date(`${b.startDate.year}-${b.startDate.month}-${b.startDate.day}`);
+      return new Date(dateA.year, dateA.month - 1, dateA.day) - new Date(dateB.year, dateB.month - 1, dateB.day);//latest to the first
+
+    });
+    setEvents(sortedEvents);
+  })
+  .catch((error) => console.error("Error fetching events:", error));
   }, []);
 
   const handleLogout = () => {
@@ -21,6 +35,7 @@ const HomePage = () => {
     setUser(null);
     navigate("/");
   };
+
 
   return (
     <div className="font-sans bg-background">
@@ -121,67 +136,72 @@ const HomePage = () => {
 
   {/* Upcoming Events Section */}
   <section className="py-12 bg-background flex flex-col items-center mt-12">
-    <div className="max-w-[1200px] w-full mx-auto flex flex-col sm:flex-col md:flex-row justify-between items-center mb-6 px-0">
-      {/* Title */}
-      <h2 className="text-3xl font-bold text-center md:text-left">
-        Upcoming <span className="text-primary">Events</span>
-      </h2>
+        <div className="max-w-[1200px] w-full mx-auto flex flex-col sm:flex-col md:flex-row justify-between items-center mb-6 px-0">
+          {/* Title */}
+          <h2 className="text-3xl font-bold text-center md:text-left">
+            Upcoming <span className="text-primary">Events</span>
+          </h2>
 
-      {/* Filters */}
-      <div className="w-full md:w-[460px] flex flex-col sm:flex-col md:flex-row gap-4 mt-4 md:mt-0">
-        {["Weekdays", "Event type", "Any category"].map((option, index) => (
-          <select key={index} className="p-2 rounded-md bg-gray-200 text-black text-sm w-full md:w-[140px] h-[40px]">
-            <option>{option}</option>
-          </select>
-        ))}
-      </div>
-    </div>
-
-
-    {/* Event Grid (2 Rows, 3 Columns) */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-[1200px] mx-auto px-0">
-      {[
-        { id: 1, image: "/img2.jpg" },
-        { id: 2, image: "/img1.jpg" },
-        { id: 3, image: "/img1.jpg" },
-        { id: 4, image: "/img1.jpg" },
-        { id: 5, image: "/img3.jpg" },
-        { id: 6, image: "/img2.jpg" },
-      ].map((event) => (
-        <div key={event.id} className="bg-white shadow-lg rounded-xl overflow-hidden p-5">
-          {/* Image Container */}
-          <div className="relative w-full flex justify-center">
-            <img
-              src={event.image}
-              alt={`Event ${event.id}`}
-              className="w-full h-[240px] object-cover rounded-lg"
-            />
-            <span className="absolute top-2 left-2 bg-white text-primary text-xs font-semibold px-2 py-1 rounded">
-              FREE
-            </span>
-          </div>
-
-          {/* Event Content (Kept Inside the Card) */}
-          <div className="mt-4 text-left space-y-2">
-            <h3 className="text-md font-semibold leading-tight text-black">
-              BestSeller Book Bootcamp - Write, Market & Publish Your Book - Lucknow
-            </h3>
-            <p className="text-xs font-medium text-primary leading-[2.5]">
-              Saturday, March 18, 9:30PM
-            </p>
-            <p className="text-xs text-gray-600">
-              ONLINE EVENT - Attend anywhere
-            </p>
+          {/* Filters */}
+          <div className="w-full md:w-[460px] flex flex-col sm:flex-col md:flex-row gap-4 mt-4 md:mt-0">
+            {["Weekdays", "Event type", "Any category"].map((option, index) => (
+              <select key={index} className="p-2 rounded-md bg-gray-200 text-black text-sm w-full md:w-[140px] h-[40px]">
+                <option>{option}</option>
+              </select>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
 
-    {/* Load More Button */}
-    <div className="flex justify-center mt-6">
-      <button onClick={() => window.location.href='/event'} className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-slate-200 mr-4  hover:text-slate-900 mt-9 ">Load more... </button>
-    </div>
-  </section>
+        {/* 🔹 Event Grid (Now Uses Fetched Events) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-[1200px] mx-auto px-0 py-0">
+          {events.slice(0, visibleEvents).map((event) => (
+            <div key={event._id} className="bg-white shadow-lg rounded-xl overflow-hidden p-5">
+              {/* Image Container */}
+              <div className="relative w-full flex justify-center">
+              <img src={`http://localhost:5000${event.imageUrl}`} alt={event.title} className="w-full h-[240px] object-cover rounded-lg"/>
+                  <span className="absolute top-2 left-2 bg-white text-primary text-xs font-semibold px-2 py-1 rounded">
+                  FREE
+                </span>
+              </div>
+
+              {/* Event Content (Dynamic Data) */}
+              <div className="mt-4 text-left ">
+                <h3 className="text-2xl font-bold leading-tight text-black font-sans">
+                  {event.title}
+                </h3>
+                <div className="text-[18px] font-normal mt-2 ">{event.description}</div>
+                <p className="text-[15px] font-medium text-primary  font-sans mt-3">
+                  <span className="text-black">Date : </span>
+                  {`${event.startDate.day}-${event.startDate.month}-${event.startDate.year}`} - 
+                  {`${event.endDate.day}-${event.endDate.month}-${event.endDate.year}`},<br />
+                  <span className="text-black">Time : </span>
+                  {`${event.startTime.hour}:${event.startTime.minute} ${event.startTime.period}`} - 
+                  {`${event.endTime.hour}:${event.endTime.minute} ${event.endTime.period}`}
+                </p>
+                <p className="text-[15px] text-gray-800 mt-8 ">
+                <span className="text-black font-semibold">Location : </span>
+                  {event.venue}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 🔹 Load More Button */}
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setVisibleEvents((prev) => prev + 3)}
+            className={`px-6 py-2 rounded-lg mt-9 ${
+              visibleEvents >= events.length
+                ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                : "bg-primary text-white hover:bg-slate-200 hover:text-slate-900"
+            }`}
+            disabled={visibleEvents >= events.length}
+          >
+            {visibleEvents >= events.length ? "No more events" : "Load more..."}
+          </button>
+        </div>
+      </section>
 
     {/* Create Your Event Section */}
 <div className="w-full bg-background mt-24">
