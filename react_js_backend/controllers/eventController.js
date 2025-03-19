@@ -1,15 +1,24 @@
 import Event from "../models/event.js";
 
-// 🔹 Unified Create Event Function (Handles Both Authenticated & Non-Authenticated Users)
+// 🔹 Create Event Controller
 export const CreateEvent = async (req, res) => {
   try {
-    const { title, venue, startTime, endTime, startDate, endDate, description, imageUrl } = req.body;
+    let { title, venue, startTime, endTime, startDate, endDate, description } = req.body;
+
+    // Parse JSON fields
+    startTime = JSON.parse(startTime);
+    endTime = JSON.parse(endTime);
+    startDate = JSON.parse(startDate);
+    endDate = JSON.parse(endDate);
 
     if (!title || !venue || !startTime || !endTime || !startDate || !endDate || !description) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if the request comes from an authenticated user
+    // Handle Image Upload (if any)
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+    // Check if request comes from an authenticated user
     const createdBy = req.user ? req.user.id : null;
 
     const newEvent = new Event({ 
@@ -21,13 +30,23 @@ export const CreateEvent = async (req, res) => {
       endDate, 
       description, 
       imageUrl, 
-      
+      createdBy,  
     });
 
     await newEvent.save();
-    res.status(201).json({ message: "Event created successfully", event: newEvent });
+    res.status(201).json({ message: "Event created successfully!", event: newEvent });
 
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Error creating event", error: error.message });
+  }
+};
+
+// 🔹 Get All Events Controller
+export const getEvents = async (req, res) => {
+  try {
+    const events = await Event.find().sort({ createdAt: -1 });
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching events", error: error.message });
   }
 };
