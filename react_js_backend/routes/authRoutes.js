@@ -1,8 +1,11 @@
 import express from 'express';
-
 import rateLimit from 'express-rate-limit';
 import authMiddleware from '../middlewares/authMiddleware.js'; // Add this middleware
 import { signup, login, getUser, logout, forgotPassword, resetPassword } from '../controllers/authController.js';
+
+// 🔹 Import additional middleware & event controller
+import authenticateUser from '../middlewares/authMiddleware.js'; 
+import { CreateEvent } from '../controllers/eventController.js';
 
 const router = express.Router();
 
@@ -28,5 +31,7 @@ router.post('/logout', logout); // Logout route
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
 
+// 🔹 Protect the create event route (without modifying your existing routes)
+router.post("/create-event", authenticateUser, CreateEvent);
 
 export default router;

@@ -113,31 +113,39 @@ export const logout = (req, res) => {
     res.json({ message: 'Logged out successfully' });
 };
 
+// ✅ Forgot Password Controller
 export const forgotPassword = async (req, res) => {
     try {
-      const { email } = req.body;
-      const user = await User.findOne({ email });
-  
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      const resetToken = crypto.randomBytes(32).toString("hex");
-      user.resetPasswordToken = resetToken;
-      user.resetPasswordExpires = Date.now() + 3600000; // 1-hour expiration
-      await user.save();
-  
-      const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
-      const message = `Click the link below to reset your password:\n\n${resetURL}`;
-  
-      await sendEmail(user.email, "Password Reset Request", message);
-  
-      res.json({ message: "Password reset link sent to your email" });
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Generate a secure random token
+        const resetToken = crypto.randomBytes(32).toString("hex");
+
+        // Hash the token before storing it
+        const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+        // Store hashed token with expiration (1 hour)
+        user.resetPasswordToken = hashedToken;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1-hour expiration
+        await user.save();
+
+        // Send only the plain token in the email
+        const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
+        const message = `Click the link below to reset your password:\n\n${resetURL}`;
+
+        await sendEmail(user.email, "Password Reset Request", message);
+
+        res.json({ message: "Password reset link sent to your email" });
     } catch (error) {
-      console.error("Forgot Password Error:", error.message);
-      res.status(500).json({ message: "Server error" });
+        console.error("Forgot Password Error:", error.message);
+        res.status(500).json({ message: "Server error" });
     }
-  };
+};
 
 // ✅ Reset Password Controller
 export const resetPassword = async (req, res) => {
@@ -153,9 +161,12 @@ export const resetPassword = async (req, res) => {
             return handleError(res, 400, "Passwords do not match");
         }
 
+        // 🔹 Hash the token to match stored value
+        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
         // 🔹 Find user with valid token
         const user = await User.findOne({
-            resetPasswordToken: token,
+            resetPasswordToken: hashedToken,
             resetPasswordExpires: { $gt: Date.now() } // Ensure token is still valid
         }).select("+password");
 
@@ -167,7 +178,7 @@ export const resetPassword = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(newPassword, salt);
 
-        // 🔹 Clear reset token fields
+        // 🔹 Clear reset token fields (invalidate after first use)
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
 
@@ -179,3 +190,4 @@ export const resetPassword = async (req, res) => {
         handleError(res, 500, "Server error");
     }
 };
+
