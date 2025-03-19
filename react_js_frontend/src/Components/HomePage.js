@@ -4,27 +4,10 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 
 const HomePage = () => {
-  const [events, setEvents] = useState([]);
-  const [blogs, setBlogs] = useState([]);
+  //const [events, setEvents] = useState([]);
+  //const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setEvents([
-      { id: 1, title: "Tech Conference 2025" },
-      { id: 2, title: "Music Festival" },
-      { id: 3, title: "Startup Meetup" },
-      { id: 4, title: "Startup Meetup" },
-      { id: 5, title: "Startup Meetup" },
-      { id: 6, title: "Startup Meetup" }
-    ]);
-
-    setBlogs([
-      { id: 1, title: "How to Organize an Event" },
-      { id: 2, title: "Top 10 Event Planning Tips" },
-      { id: 3, title: "Why Networking Events Matter" }
-    ]);
-  }, []);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -201,39 +184,51 @@ const HomePage = () => {
   </section>
 
     {/* Create Your Event Section */}
-      <div className="w-full bg-background mt-24">
-        <div className="w-full h-auto md:h-[252px] flex justify-center items-center bg-navy py-12">
-          <section className="text-white px-6 md:px-16 flex flex-col md:flex-row justify-between items-center w-full max-w-6xl">
+<div className="w-full bg-background mt-24">
+  <div className="w-full h-auto md:h-[252px] flex justify-center items-center bg-navy py-12">
+    <section className="text-white px-6 md:px-16 flex flex-col md:flex-row justify-between items-center w-full max-w-6xl">
 
-            {/* Left Side - Illustration */}
-            <div className="w-full md:w-1/2 flex justify-center items-center">
-              <img 
-                src="crtevnt.png" 
-                alt="Event Illustration" 
-                className="max-w-[90%] sm:max-w-[70%] md:max-w-[544.67px] h-auto md:h-[303px] object-contain transform md:translate-y-[-25px] md:translate-x-[-50px]"
-              />
-            </div>
+      {/* Left Side - Illustration */}
+      <div className="w-full md:w-1/2 flex justify-center items-center">
+        <img 
+          src="crtevnt.png" 
+          alt="Event Illustration" 
+          className="max-w-[90%] sm:max-w-[70%] md:max-w-[544.67px] h-auto md:h-[303px] object-contain transform md:translate-y-[-25px] md:translate-x-[-50px]"
+        />
+      </div>
 
-            {/* Right Side - Text Content */}
-            <div className="w-full md:w-1/2 text-center md:text-left mt-6 md:mt-0">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold">
-                Make your own Event
-              </h2>
-              <p className="mt-3 text-sm sm:text-base md:text-lg text-white max-w-[382px] h-auto mx-auto md:mx-0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </p>
+      {/* Right Side - Text Content */}
+      <div className="w-full md:w-1/2 text-center md:text-left mt-6 md:mt-0">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold">
+          Make your own Event
+        </h2>
+        <p className="mt-3 text-sm sm:text-base md:text-lg text-white max-w-[382px] h-auto mx-auto md:mx-0">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        </p>
 
-              {/* Call to Action Button */}
-              <div className="flex justify-center md:justify-start">
-                <button className="mt-6 px-6 py-3 bg-primary text-white text-lg font-semibold rounded-lg transition duration-300 ease-in-out hover:bg-purple-600 hover:scale-105 w-[80%] sm:w-[60%] md:w-[302px] h-[60px]">
-                <button onClick={() => window.location.href='/create-events'} >Create Events</button>
-                </button>
-              </div>
-            </div>
-
-          </section>
+        {/* Conditional Rendering for Button */}
+        <div className="flex justify-center md:justify-start">
+          {user ? (
+            <button 
+              onClick={() => navigate('/create-events')}
+              className="mt-6 px-6 py-3 bg-primary text-white text-lg font-semibold rounded-lg transition duration-300 ease-in-out hover:bg-purple-600 hover:scale-105 w-[80%] sm:w-[60%] md:w-[302px] h-[60px]"
+            >
+              Create Event
+            </button>
+          ) : (
+            <button 
+              onClick={() => navigate('/login')}
+              className="mt-6 px-6 py-3 bg-primary text-white text-lg font-semibold rounded-lg transition duration-300 ease-in-out hover:bg-gray-600 hover:scale-105 w-[80%] sm:w-[60%] md:w-[302px] h-[60px]"
+            >
+              Login to Create Event
+            </button>
+          )}
         </div>
       </div>
+
+    </section>
+  </div>
+</div>
 
 
      {/* Brand Logos Section */}

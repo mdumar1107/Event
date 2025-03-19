@@ -2,6 +2,25 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const handleLogin = async (email, password) => {
+    try {
+        const response = await axios.post("/api/auth/login", { email, password });
+
+        if (response.data.token) {
+            // 🔹 Store token in localStorage after successful login
+            localStorage.setItem("token", response.data.token);
+
+            // 🔹 Store user data (optional)
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+
+            alert("Login successful!");
+            window.location.href = "/"; // Redirect to homepage
+        }
+    } catch (error) {
+        console.error("Login Error:", error.response?.data?.message || "Something went wrong");
+        alert(error.response?.data?.message || "Invalid credentials");
+    }
+};
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
