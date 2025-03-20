@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Footer from "../Components/Footer";
+import Header from "../Components/Header";
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
@@ -30,52 +32,15 @@ const HomePage = () => {
   .catch((error) => console.error("Error fetching events:", error));
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-    navigate("/");
-  };
+  
 
 
   return (
     <div className="font-sans bg-background">
       {/* Header Section */}
-<div className="w-full h-[49px] mx-auto flex justify-between items-center">
-  <header className="w-[1200px] h-[49px] mx-auto flex justify-between items-center p-0 bg-background mt-6">
-    <h1 className="text-3xl font-bold">
-      Event <span className="text-primary">Hive</span>
-    </h1>
-    <div>
-      {user ? (
-        <>
-          <span className="mr-4 text-lg font-semibold text-gray-700">{user.name}</span>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 sm:text-[16px] text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-red-600"
-          >
-            Logout
-          </button>
-        </>
-      ) : (
-        <>
-          <button
-            onClick={() => navigate("/login")}
-            className="mr-2 sm:text-[16px] sm:mr-4 font-sans text-black px-4 sm:px-6 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-200"
-          >
-            Login
-          </button>
-          <button
-            onClick={() => navigate("/signup")}
-            className="bg-primary sm:text-[16px] font-sans text-white px-4 sm:px-6 py-2 rounded-lg hover:text-slate-900 hover:bg-slate-200"
-          >
-            Signup
-          </button>
-        </>
-      )}
-    </div>
-  </header>
-</div>
-
+      <div>
+        <Header /> 
+      </div>
       {/* Hero Section */}
       <div className="w-full flex justify-center items-center mt-6">
         <section 
@@ -412,59 +377,9 @@ const HomePage = () => {
 
 
       {/* Footer Section */}
-<footer className="bg-navy text-white p-12 text-center w-full min-h-[334px] flex flex-col justify-between">
-  {/* Branding */}
-  <h2 className="text-3xl font-bold">
-    Event <span className="text-primary">Hive</span>
-  </h2>
-
-  {/* Email Subscription Form */}
-  <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-lg mx-auto">
-    <input
-      type="email"
-      placeholder="Enter your mail"
-      className="p-3 rounded-md w-full sm:w-auto sm:flex-1 outline-none text-black"
-    />
-    <button className="bg-primary text-white px-6 py-2 rounded-md w-full sm:w-auto hover:bg-purple-600">
-      Subscribe
-    </button>
-  </div>
-
-  {/* Navigation Links */}
-  <div className="flex justify-center gap-6 mt-6 text-lg font-medium flex-wrap">
-    <a href="#" className="hover:text-purple-400">Home</a>
-    <a href="#" className="hover:text-purple-400">About</a>
-    <a href="#" className="hover:text-purple-400">Services</a>
-    <a href="#" className="hover:text-purple-400">Get in touch</a>
-    <a href="#" className="hover:text-purple-400">FAQs</a>
-  </div>
-
-  {/* Divider */}
-  <hr className="mt-6 border-t border-gray-400 w-4/5 mx-auto" />
-
-  {/* Bottom Section (Language, Social Media, Copyright) */}
-  <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-[1200px] mx-auto mt-4 text-sm">
-    {/* Language Selection - Left (Mobile: Centered) */}
-    <div className="flex gap-4 mb-4 sm:mb-0">
-      <button className="bg-primary text-white px-3 py-1 rounded-md">English</button>
-      <button className="text-gray-300 hover:text-white">French</button>
-      <button className="text-gray-300 hover:text-white">Hindi</button>
-    </div>
-
-    {/* Social Media Icons - Centered */}
-    <div className="flex gap-6 text-2xl mb-4 sm:mb-0">
-      <FaLinkedin className="cursor-pointer hover:text-purple-400" />
-      <FaInstagram className="cursor-pointer hover:text-purple-400" />
-      <FaFacebook className="cursor-pointer hover:text-purple-400" />
-    </div>
-
-    {/* Copyright Text - Right (Mobile: Centered) */}
-    <p className="text-gray-300 text-sm text-center sm:text-right">
-      Non-Copyrighted © 2023 Upload by EventHive
-    </p>
-  </div>
-</footer>
-
+      <div>
+        <Footer />
+      </div>
     </div>
   );
 };
