@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
-import { CreateEvent, getEvents } from "../controllers/eventController.js";
+import { CreateEvent, getEvents, getEventById } from "../controllers/eventController.js";
 
 const router = express.Router();
 
@@ -20,5 +20,8 @@ const upload = multer({ storage: storage });
 // Event routes
 router.post("/create", upload.single("image"), CreateEvent);
 router.get("/", getEvents);
+
+// 🔹 New Route: Get Event by ID
+router.get("/:id", getEventById);
 
 export default router;

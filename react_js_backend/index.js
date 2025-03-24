@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import authRoutes from './routes/authRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ const app = express();
 // Middleware
 app.use(cors({ origin: 'http://localhost:3000', credentials: true })); // Replace with frontend URL if needed
 app.use(express.json());
+app.use("/tickets", express.static(path.join(__dirname, "tickets")));
 
 // Serve uploaded images
 app.use('/uploads', express.static(path.join('uploads')));
@@ -25,6 +27,8 @@ app.use('/uploads', express.static(path.join('uploads')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
+app.use("/api/booking", bookingRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 
