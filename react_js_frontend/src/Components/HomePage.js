@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
@@ -120,7 +121,8 @@ const HomePage = () => {
         {/* 🔹 Event Grid (Now Uses Fetched Events) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-[1200px] mx-auto px-0 py-0">
           {events.slice(0, visibleEvents).map((event) => (
-            <div key={event._id} className="bg-white shadow-lg rounded-xl overflow-hidden p-5">
+            <Link to={`/event/${event._id}`} key={event._id} className="bg-white shadow-lg rounded-xl overflow-hidden p-5">
+
               {/* Image Container */}
               <div className="relative w-full flex justify-center">
               <img src={`http://localhost:5000${event.imageUrl}`} alt={event.title} className="w-full h-[240px] object-cover rounded-lg"/>
@@ -148,7 +150,7 @@ const HomePage = () => {
                   {event.venue}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
