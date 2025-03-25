@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-
 //import pdfkit from "pdfkit"
 
 const EventDetails = () => {
@@ -177,45 +176,39 @@ const EventDetails = () => {
       pdf.save("event-ticket.pdf");
     });
   };
-  
+
   if (loading) return <div className="text-center py-10">Loading event details...</div>;
   if (error) return <div className="text-red-600 text-center py-10">{error}</div>;
   if (!event) return <div className="text-red-600 text-center py-10">Event not found.</div>;
 
   return (
     <div className="max-w-2xl mx-auto p-5">
-      {bookingSuccess ? (
-        <div className="text-center bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-          <strong className="font-bold">Booking Successful! 🎉</strong>
-          <p className="text-sm">Your ticket has been generated.</p>
-          {bookingSuccess && (
-  <div className="text-center bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-    <strong className="font-bold">Booking Successful! 🎉</strong>
-    <p className="text-sm">Your ticket has been generated.</p>
+  {bookingSuccess ? (
+    <div className="text-center bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+      <strong className="font-bold">Booking Successful! 🎉</strong>
+      <p className="text-sm">Your ticket has been generated.</p>
 
-    {/* Ticket Content for PDF */}
-    <div id="ticket-content" className="p-4 bg-white border rounded shadow-md mt-3">
-      <h2 className="text-xl font-bold">{event.title}</h2>
-      <p><strong>Date:</strong> {`${event.startDate.day}-${event.startDate.month}-${event.startDate.year}`}</p>
-      <p><strong>Time:</strong> {`${event.startTime.hour}:${event.startTime.minute} ${event.startTime.period}`}</p>
-      <p><strong>Venue:</strong> {event.venue}</p>
-      <p><strong>Attendee:</strong> {bookingDetails.userFullName}</p>
-      <p><strong>Email:</strong> {bookingDetails.email}</p>
-      <p><strong>Phone:</strong> {bookingDetails.phoneNumber}</p>
-      <p><strong>Tickets:</strong> {bookingDetails.numTickets}</p>
-      <p><strong>Total Amount:</strong> ₹{(event.price || 250) * bookingDetails.numTickets}</p>
+      {/* Ticket Content for PDF */}
+      <div id="ticket-content" className="p-4 bg-white border rounded shadow-md mt-3">
+        <h2 className="text-xl font-bold">{event.title}</h2>
+        <p><strong>Date:</strong> {`${event.startDate.day}-${event.startDate.month}-${event.startDate.year}`}</p>
+        <p><strong>Time:</strong> {`${event.startTime.hour}:${event.startTime.minute} ${event.startTime.period}`}</p>
+        <p><strong>Venue:</strong> {event.venue}</p>
+        <p><strong>Attendee:</strong> {bookingDetails.userFullName}</p>
+        <p><strong>Email:</strong> {bookingDetails.email}</p>
+        <p><strong>Phone:</strong> {bookingDetails.phoneNumber}</p>
+        <p><strong>Tickets:</strong> {bookingDetails.numTickets}</p>
+        <p><strong>Total Amount:</strong> ₹{(event.price || 250) * bookingDetails.numTickets}</p>
+      </div>
+
+      <button
+        onClick={generatePDF}
+        className="block mt-3 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+      >
+        Download Ticket
+      </button>
     </div>
 
-    <button
-      onClick={generatePDF}
-      className="block mt-3 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
-    >
-      Download Ticket
-    </button>
-  </div>
-)}
-
-        </div>
       ) : (
         <>
           <img
