@@ -126,9 +126,7 @@ const HomePage = () => {
               {/* Image Container */}
               <div className="relative w-full flex justify-center">
               <img src={`http://localhost:5000${event.imageUrl}`} alt={event.title} className="w-full h-[240px] object-cover rounded-lg"/>
-                  <span className="absolute top-2 left-2 bg-white text-primary text-xs font-semibold px-2 py-1 rounded">
-                  FREE
-                </span>
+                  
               </div>
 
               {/* Event Content (Dynamic Data) */}
