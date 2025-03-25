@@ -22,7 +22,8 @@ app.use(express.json());
 app.use("/tickets", express.static(path.join(__dirname, "tickets")));
 
 // Serve uploaded images
-app.use('/uploads', express.static(path.join('uploads')));
+app.use("/uploads", express.static("uploads")); // Make /uploads public
+
 
 // Routes
 app.use('/api/auth', authRoutes);
