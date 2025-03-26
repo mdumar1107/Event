@@ -2,34 +2,20 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const handleLogin = async (email, password) => {
-    try {
-        const response = await axios.post("/api/auth/login", { email, password });
-
-        if (response.data.token) {
-            // 🔹 Store token in localStorage after successful login
-            localStorage.setItem("token", response.data.token);
-
-            // 🔹 Store user data (optional)
-            localStorage.setItem("user", JSON.stringify(response.data.user));
-
-            alert("Login successful!");
-            window.location.href = "/"; // Redirect to homepage
-        }
-    } catch (error) {
-        console.error("Login Error:", error.response?.data?.message || "Something went wrong");
-        alert(error.response?.data?.message || "Invalid credentials");
-    }
-};
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);  
+  const [loading, setLoading] = useState(false);  
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
+    setLoading(true);
+
     try {
       const response = await axios.post(
         "http://localhost:5000/api/auth/login",
@@ -37,19 +23,31 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      const userData = response.data.user; // Assuming response contains user data
-      localStorage.setItem("user", JSON.stringify({ name: userData.name, email: userData.email }));
+      const { token, user } = response.data;
 
-      alert("Login successful!");
-      navigate("/"); // Redirect to dashboard or home
+      // 🔹 Store JWT token & user info in localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify({ name: user.name, email: user.email }));
+
+      // ✅ Show success message before redirecting
+      setSuccess("Login successful! Redirecting to home page...");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000); // Redirect after 2 seconds
+
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-[1440px] min-h-[900px] flex flex-col lg:grid lg:grid-cols-3 bg-white rounded-lg shadow-lg overflow-hidden">
+        
+        {/* Left Side (Login Form) */}
         <div className="w-full lg:col-span-2 flex justify-center items-center bg-background order-2 lg:order-1">
           <div className="w-[90%] max-w-[578px] bg-background flex flex-col justify-center p-6">
             <h2 className="text-3xl font-bold text-center mb-6">
@@ -58,7 +56,11 @@ const Login = () => {
               </Link>
             </h2>
             <h2 className="text-3xl font-bold mb-6 text-center">Sign In to Event Hive</h2>
+            
+            {/* ✅ Success & Error Messages */}
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+            {success && <p className="text-green-500 text-center mb-4">{success}</p>}
+
             <form onSubmit={handleLogin}>
               <div className="w-full flex flex-col">
                 <label className="block text-sm font-medium">EMAIL</label>
@@ -68,6 +70,7 @@ const Login = () => {
                   className="w-full h-[46px] p-3 rounded-lg mt-2 mb-4 border"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
 
                 <div className="flex justify-between items-center mt-5">
@@ -85,15 +88,21 @@ const Login = () => {
                   className="w-full h-[46px] p-3 rounded-lg mt-2 mb-6 border"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
 
                 <div className="flex justify-center">
-                  <button type="submit" className="w-[257px] bg-primary text-white p-3 rounded-lg mb-4 hover:bg-purple-500">
-                    Sign In
+                  <button 
+                    type="submit" 
+                    className="w-[257px] bg-primary text-white p-3 rounded-lg mb-4 hover:bg-purple-500 disabled:opacity-50"
+                    disabled={loading}  
+                  >
+                    {loading ? "Signing In..." : "Sign In"}  
                   </button>
                 </div>
               </div>
             </form>
+
             <div className="text-center text-sm mb-4">Or</div>
             <div className="flex justify-center">
               <button className="w-[317px] h-[46px] flex justify-center items-center gap-2 border p-3 rounded-lg bg-white">
@@ -103,6 +112,8 @@ const Login = () => {
             </div>
           </div>
         </div>
+
+        {/* Right Side (Signup Prompt) */}
         <div
           className="w-full lg:col-span-1 flex items-center justify-center bg-cover bg-center relative min-h-[500px] lg:min-h-[900px] order-1 lg:order-2"
           style={{ backgroundImage: "url('/signin.jpg')" }}

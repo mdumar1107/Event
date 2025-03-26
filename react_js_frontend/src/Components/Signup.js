@@ -10,6 +10,8 @@ const SignUp = () => {
     confirmPassword: ""
   });
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");  
+  const [loading, setLoading] = useState(false);  
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,18 +21,26 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setMessage("");
+    setLoading(true);  
+
     try {
       const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
-      alert(res.data.message);
-      navigate("/Login");
+      setMessage(res.data.message);  
+      
+      setTimeout(() => navigate("/Login"), 2000);  
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);  
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen px-0 py-0 bg-gray-100">
       <div className="w-full max-w-[1400px] max-h-[900px] grid grid-cols-1 md:grid-cols-3 bg-white rounded-lg shadow-lg overflow-hidden px-0 py-0 md:p-0">
+        
+        {/* Left Side (Welcome Section) */}
         <div
           className="w-full md:col-span-1 flex items-center justify-center bg-cover bg-center relative h-56 md:h-auto"
           style={{ backgroundImage: "url('/signup.jpg')" }}
@@ -50,6 +60,7 @@ const SignUp = () => {
           </div>
         </div>
 
+        {/* Right Side (Signup Form) */}
         <div className="w-full md:col-span-2 flex justify-center items-center p-6 bg-background overflow-auto">
           <div className="w-[90%] max-w-[578px] min-h-[500px] md:h-[708px] bg-background flex flex-col justify-center p-6">
             <h1 className="text-xl font-bold mb-2 text-center">
@@ -59,6 +70,8 @@ const SignUp = () => {
             </h1>
             <h2 className="text-3xl font-bold mb-6 text-center">Sign Up to Event Hive</h2>
             
+            {/* ✅ Success & Error Messages */}
+            {message && <p className="text-green-600 text-center mb-4">{message}</p>}
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
             
             <form onSubmit={handleSubmit}>
@@ -108,8 +121,12 @@ const SignUp = () => {
                 />
                 
                 <div className="flex justify-center">
-                  <button type="submit" className="w-[257px] bg-primary text-white p-3 rounded-lg mb-4 hover:bg-purple-500">
-                    Sign Up
+                  <button 
+                    type="submit" 
+                    className="w-[257px] bg-primary text-white p-3 rounded-lg mb-4 hover:bg-purple-500 disabled:opacity-50"
+                    disabled={loading}  
+                  >
+                    {loading ? "Signing Up..." : "Sign Up"}  
                   </button>
                 </div>
               </div>
