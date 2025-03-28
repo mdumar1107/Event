@@ -72,6 +72,9 @@ export const login = async (req, res) => {
         if (!isMatch) {
             return handleError(res, 400, 'Invalid credentials');
         }
+// ✅ Update lastLogin timestamp
+user.lastLogin = new Date();
+await user.save(); // Save the updated user info in the database
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 

@@ -1,14 +1,17 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import authRoutes from './routes/authRoutes.js';
-import eventRoutes from './routes/eventRoutes.js';
-import bookingRoutes from './routes/bookingRoutes.js';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
+import authRoutes from "./routes/authRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js"; // Imported analytics routes
+
+// Load environment variables
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,19 +20,19 @@ const __dirname = dirname(__filename);
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000', credentials: true })); // Replace with frontend URL if needed
+app.use(cors({ origin: "http://localhost:3000", credentials: true })); // Adjust frontend URL if necessary
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // To handle form submissions
 app.use("/tickets", express.static(path.join(__dirname, "tickets")));
 
 // Serve uploaded images
-app.use("/uploads", express.static("uploads")); // Make /uploads public
-
+app.use("/uploads", express.static("uploads")); // Makes /uploads public
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/events', eventRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
 app.use("/api/booking", bookingRoutes);
-
+app.use("/api/analytics", analyticsRoutes); // Added analytics API routes
 
 const PORT = process.env.PORT || 5000;
 
@@ -37,7 +40,15 @@ const PORT = process.env.PORT || 5000;
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    console.log("MongoDB Connected"); // Added console log for successful connection
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); // Fixed template string syntax
+    console.log("✅ MongoDB Connected Successfully");
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
   })
-  .catch((err) => console.error("MongoDB Connection Error:", err)); // Improved error logging
+  .catch((err) => {
+    console.error("❌ MongoDB Connection Error:", err);
+  });
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  process.exit(1); // Exit process with failure
+});

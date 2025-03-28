@@ -34,13 +34,13 @@ export const bookEvent = async (req, res) => {
       razorpay_signature,
     });
 
-    // Save booking to database
-    await newBooking.save();
+    await newBooking.save(); // ✅ Ensures it saves in MongoDB
 
     res.status(201).json({
       success: true,
       message: "Booking successful!",
-      ticketUrl: `/tickets/${newBooking._id}`, // You can generate a ticket URL
+      booking: newBooking,  // ✅ Includes the newly created booking object
+      ticketUrl: `/tickets/${newBooking._id}`, // ✅ Retains your ticket URL generation
     });
   } catch (error) {
     console.error("Booking Error:", error);
