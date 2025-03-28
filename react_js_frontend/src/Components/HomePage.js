@@ -106,16 +106,7 @@ const HomePage = () => {
           {/* Title */}
           <h2 className="text-3xl font-bold text-center md:text-left">
             Upcoming <span className="text-primary">Events</span>
-          </h2>
-
-          {/* Filters */}
-          <div className="w-full md:w-[460px] flex flex-col sm:flex-col md:flex-row gap-4 mt-4 md:mt-0">
-            {["Weekdays", "Event type", "Any category"].map((option, index) => (
-              <select key={index} className="p-2 rounded-md bg-gray-200 text-black text-sm w-full md:w-[140px] h-[40px]">
-                <option>{option}</option>
-              </select>
-            ))}
-          </div>
+          </h2>          
         </div>
 
         {/* 🔹 Event Grid (Now Uses Fetched Events) */}

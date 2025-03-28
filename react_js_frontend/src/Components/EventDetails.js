@@ -86,7 +86,7 @@ const EventDetails = () => {
 
       const orderResponse = await axios.post(
         "http://localhost:5000/api/booking/create-order",
-        { amount: totalAmount }
+        { amount: totalAmount, eventId: event._id } // Send eventId
       );
 
       const { id: orderId, amount, currency } = orderResponse.data;
