@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
+import cookieParser from 'cookie-parser';
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
@@ -18,6 +19,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
+
+// Use cookie-parser middleware
+app.use(cookieParser());
 
 // Middleware
 app.use(cors({ origin: "http://localhost:3000", credentials: true })); // Adjust frontend URL if necessary
