@@ -18,7 +18,7 @@ const Dashboard = () => {
           axios.get("http://localhost:5000/api/analytics/daily-traffic"),
           axios.get("http://localhost:5000/api/analytics/weekly-revenue"),
           axios.get("http://localhost:5000/api/analytics/total-events"),
-          axios.get("http://localhost:5000/api/analytics/pie-chart")
+          axios.get("http://localhost:5000/api/analytics/pie-chart-data")
         ]);
 
         setTotalVisitors(visitorsRes.data.totalVisitors);
@@ -40,65 +40,52 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="w-[1440px] h-[1150px] flex bg-gray-100 p-0">
+    <div className="w-full min-h-screen flex bg-gray-100">
       {/* Sidebar */}
-      <div className="w-[250px] h-[1150px] bg-white flex flex-col items-center px-0 py-0 shadow-lg">
+      <div className="w-[250px] bg-white flex flex-col items-center shadow-lg">
         <h1 className="text-primary text-center text-[27px] font-bold mt-4 px-6 py-4">Event Hive</h1>
         <nav className="w-full px-6 mt-8">
-          <NavLink to="/dashboard" className={({ isActive }) => `block px-6 py-4 font-semibold rounded-lg ${isActive ? "bg-primary text-white" : "text-black hover:bg-gray-200"}`}>Dashboard</NavLink>
-          <NavLink to="/dash-events" className={({ isActive }) => `block px-6 py-4 font-semibold rounded-lg ${isActive ? "bg-primary text-white" : "text-black hover:bg-gray-200"}`}>Events</NavLink>
-          <NavLink to="/dash-messages" className={({ isActive }) => `block px-6 py-4 font-semibold rounded-lg ${isActive ? "bg-primary text-white" : "text-black hover:bg-gray-200"}`}>Messages</NavLink>
-          <NavLink to="/dash-profile" className={({ isActive }) => `block px-6 py-4 font-semibold rounded-lg ${isActive ? "bg-primary text-white" : "text-black hover:bg-gray-200"}`}>Profile</NavLink>
+          <NavLink to="/dashboard" className={({ isActive }) =>`block px-6 py-4 font-semibold rounded-lg ${isActive ? "bg-primary text-white" : "text-black hover:bg-gray-200"}`}>Dashboard</NavLink>
+          <NavLink to="/dash-events" className="block px-6 py-4 font-semibold rounded-lg text-black hover:bg-gray-200">Events</NavLink>
+          <NavLink to="/dash-messages" className="block px-6 py-4 font-semibold rounded-lg text-black hover:bg-gray-200">Messages</NavLink>
+          <NavLink to="/dash-profile" className="block px-6 py-4 font-semibold rounded-lg text-black hover:bg-gray-200">Profile</NavLink>
         </nav>
       </div>
 
       {/* Main Content */}
-      <div className="w-[1190px] flex flex-col px-0 py-0">
-        <div className="w-[1190px] h-[100px] bg-white"></div>
-        <div className="flex flex-col items-center py-[20px]">
-          <div className="w-[1130px] h-[984px] bg-background mt-4 px-0 py-0 justify-center items-center">
-            {/* Row 1: Four Cards */}
-            <div className="grid grid-cols-4 gap-[43px] h-[214px]">
-              <div className="bg-white h-full rounded-lg flex justify-center items-center shadow-md">
-                <h2 className={`text-xl font-bold ${totalVisitors !== null ? "text-black" : "text-gray-400"}`}>
-                  {totalVisitors !== null ? totalVisitors : "No Data"} Visitors
-                </h2>
+      <div className="flex-1 flex flex-col p-6">
+        <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>
+        
+        {/* Stats Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[{ label: "Total Visitors", value: totalVisitors },
+            { label: "Daily Traffic", value: dailyTraffic },
+            { label: "Weekly Revenue", value: weeklyRevenue ? `₹${weeklyRevenue}` : null },
+            { label: "Total Events", value: totalEvents }]
+            .map((stat, index) => (
+              <div key={index} className="bg-white rounded-lg p-6 shadow-md text-center">
+                <h3 className="text-lg font-semibold text-gray-600">{stat.label}</h3>
+                <p className="text-2xl font-bold text-gray-800">{stat.value !== null ? stat.value : "No Data"}</p>
               </div>
-              <div className="bg-white h-full rounded-lg flex justify-center items-center shadow-md">
-                <h2 className={`text-xl font-bold ${dailyTraffic !== null ? "text-black" : "text-gray-400"}`}>
-                  {dailyTraffic !== null ? dailyTraffic : "No Data"} Daily Traffic
-                </h2>
-              </div>
-              <div className="bg-white h-full rounded-lg flex justify-center items-center shadow-md">
-                <h2 className={`text-xl font-bold ${weeklyRevenue !== null ? "text-black" : "text-gray-400"}`}>
-                  ₹{weeklyRevenue !== null ? weeklyRevenue : "No Data"} Weekly Revenue
-                </h2>
-              </div>
-              <div className="bg-white h-full rounded-lg flex justify-center items-center shadow-md">
-                <h2 className={`text-xl font-bold ${totalEvents !== null ? "text-black" : "text-gray-400"}`}>
-                  {totalEvents !== null ? totalEvents : "No Data"} Events
-                </h2>
-              </div>
-            </div>
+            ))}
+        </div>
 
-            {/* Pie Chart Section */}
-            <div className="h-[345px] bg-white mt-8 rounded-lg shadow-md p-4 flex flex-col items-center">
-              <h2 className="text-[24px] font-semibold">User Distribution</h2>
-              {pieChartData.newUsers + pieChartData.returningUsers > 0 ? (
-                <PieChart width={300} height={300}>
-                  <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value">
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              ) : (
-                <p className="mt-4 text-gray-400">No data available</p>
-              )}
-            </div>
-          </div>
+        {/* Pie Chart Section */}
+        <div className="bg-white rounded-lg p-6 shadow-md mt-8 flex flex-col items-center">
+          <h3 className="text-xl font-semibold mb-4">User Distribution</h3>
+          {pieChartData.newUsers + pieChartData.returningUsers > 0 ? (
+            <PieChart width={300} height={300}>
+              <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} dataKey="value">
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          ) : (
+            <p className="text-gray-400">No data available</p>
+          )}
         </div>
       </div>
     </div>
