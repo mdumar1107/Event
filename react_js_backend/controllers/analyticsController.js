@@ -1,7 +1,7 @@
 import User from "../models/user.js";
 import Booking from "../models/booking.js";
 import Event from "../models/event.js";
-import Analytics from "../models/analytics.js"; // Import the Analytics model
+import Analytics from "../models/analytics.js"; // Ensure proper import
 
 // Function to update analytics in the database
 const updateAnalytics = async () => {
@@ -22,21 +22,19 @@ const updateAnalytics = async () => {
     const newUsers = await User.countDocuments({ createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } });
     const returningUsers = await User.countDocuments({ createdAt: { $lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } });
 
-    // Find existing analytics document or create a new one
-    let analytics = await Analytics.findOne();
-    if (!analytics) {
-      analytics = new Analytics(); // Create a new document if none exists
-    }
-
-    // Update values
-    analytics.totalVisitors = totalVisitors;
-    analytics.dailyVisitors = dailyVisitors;
-    analytics.weeklyRevenue = weeklyRevenue;
-    analytics.totalEvents = totalEvents;
-    analytics.newUsers = newUsers;
-    analytics.returningUsers = returningUsers;
-
-    await analytics.save(); // Save to the database
+    // Ensure a single analytics document exists
+    const analytics = await Analytics.findByIdAndUpdate(
+      "analytics", // Fixed ID to enforce a single document
+      {
+        totalVisitors,
+        dailyVisitors,
+        weeklyRevenue,
+        totalEvents,
+        newUsers,
+        returningUsers,
+      },
+      { upsert: true, new: true }
+    );
 
     console.log("✅ Analytics updated successfully:", analytics);
   } catch (err) {
@@ -45,11 +43,11 @@ const updateAnalytics = async () => {
 };
 
 // API endpoint to get analytics (with automatic update)
-export default async function getAnalytics(req, res) {
+export const getAnalytics = async (req, res) => {
   try {
     await updateAnalytics(); // Ensure fresh data
-    const analytics = await Analytics.findOne();
-    
+    const analytics = await Analytics.findById("analytics");
+
     if (!analytics) {
       return res.status(404).json({ message: "No analytics data found" });
     }
@@ -138,7 +136,7 @@ export const getPieChartData = async (req, res) => {
     const newUsers = await User.countDocuments({ createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } });
     const returningUsers = await User.countDocuments({ createdAt: { $lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } });
 
-    res.json({ newUsers: newUsers || 0, returningUsers: returningUsers || 0 }); // Ensure valid response
+    res.json({ newUsers: newUsers || 0, returningUsers: returningUsers || 0 });
   } catch (err) {
     console.error("❌ Error fetching pie chart data:", err);
     res.status(500).json({ error: "Error fetching pie chart data" });
