@@ -1,5 +1,5 @@
 import express from "express";
-import { bookEvent } from "../controllers/bookingController.js";
+import { bookEvent, getUserBookings } from "../controllers/bookingController.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import dotenv from "dotenv";
@@ -12,7 +12,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Create an order (New Route)
+// Create an order
 router.post("/create-order", async (req, res) => {
   try {
     const { amount } = req.body;
@@ -45,9 +45,12 @@ router.post("/verify-payment", async (req, res) => {
       .digest("hex");
 
     if (generatedSignature === signature) {
-      await bookEvent({
-        body: { ...bookingDetails, razorpay_payment_id: paymentId, razorpay_order_id: orderId, razorpay_signature: signature },
-      }, res);
+      await bookEvent(
+        {
+          body: { ...bookingDetails, razorpay_payment_id: paymentId, razorpay_order_id: orderId, razorpay_signature: signature },
+        },
+        res
+      );
     } else {
       res.status(400).json({ success: false, message: "Payment verification failed!" });
     }
@@ -56,5 +59,8 @@ router.post("/verify-payment", async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error!" });
   }
 });
+
+// ✅ NEW: Fetch all bookings
+router.get("/bookings", getUserBookings);
 
 export default router;
