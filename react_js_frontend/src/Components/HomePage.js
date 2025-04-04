@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
+import EventCard from "../Components/EventCard";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
@@ -111,36 +112,11 @@ const HomePage = () => {
 
         {/* 🔹 Event Grid (Now Uses Fetched Events) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-[1200px] mx-auto px-0 py-0">
-          {events.slice(0, visibleEvents).map((event) => (
-            <Link to={`/event/${event._id}`} key={event._id} className="bg-white shadow-lg rounded-xl overflow-hidden p-5">
-
-              {/* Image Container */}
-              <div className="relative w-full flex justify-center">
-              <img src={`http://localhost:5000${event.imageUrl}`} alt={event.title} className="w-full h-[240px] object-cover rounded-lg"/>
-                  
-              </div>
-
-              {/* Event Content (Dynamic Data) */}
-              <div className="mt-4 text-left ">
-                <h3 className="text-2xl font-bold leading-tight text-black font-sans">
-                  {event.title}
-                </h3>
-                <div className="text-[18px] font-normal mt-2 ">{event.description}</div>
-                <p className="text-[15px] font-medium text-primary  font-sans mt-3">
-                  <span className="text-black">Date : </span>
-                  {`${event.startDate.day}-${event.startDate.month}-${event.startDate.year}`} - 
-                  {`${event.endDate.day}-${event.endDate.month}-${event.endDate.year}`},<br />
-                  <span className="text-black">Time : </span>
-                  {`${event.startTime.hour}:${event.startTime.minute} ${event.startTime.period}`} - 
-                  {`${event.endTime.hour}:${event.endTime.minute} ${event.endTime.period}`}
-                </p>
-                <p className="text-[15px] text-gray-800 mt-8 ">
-                <span className="text-black font-semibold">Location : </span>
-                  {event.venue}
-                </p>
-              </div>
-            </Link>
-          ))}
+        {events.slice(0, visibleEvents).map((event) => (
+  <Link to={`/event/${event._id}`} key={event._id}>
+    <EventCard event={event} />
+  </Link>
+))}
         </div>
 
         {/* 🔹 Load More Button */}
