@@ -1,7 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import { FaLinkedin, FaInstagram, FaFacebook } from "react-icons/fa";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubscribe = async () => {
+    if (!email.trim()) {
+      setError("Please enter a valid email.");
+      setMsg("");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/subscribe", {
+        email,
+      });
+
+      setMsg("🎉 Thank you for subscribing!");
+      setError("");
+      setEmail("");
+    } catch (err) {
+      console.error(err);
+      setError("❌ Subscription failed. Try again later.");
+      setMsg("");
+    }
+  };
+
   return (
     <footer className="bg-navy text-white p-12 text-center w-full min-h-[334px] flex flex-col justify-between">
       {/* Branding */}
@@ -13,12 +40,23 @@ const Footer = () => {
       <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-lg mx-auto">
         <input
           type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your mail"
           className="p-3 rounded-md w-full sm:w-auto sm:flex-1 outline-none text-black"
         />
-        <button className="bg-primary text-white px-6 py-2 rounded-md w-full sm:w-auto hover:bg-purple-600">
+        <button
+          onClick={handleSubscribe}
+          className="bg-primary text-white px-6 py-2 rounded-md w-full sm:w-auto hover:bg-purple-600"
+        >
           Subscribe
         </button>
+      </div>
+
+      {/* Success/Error Message */}
+      <div className="mt-2 text-sm">
+        {msg && <p className="text-green-400">{msg}</p>}
+        {error && <p className="text-red-400">{error}</p>}
       </div>
 
       {/* Navigation Links */}
