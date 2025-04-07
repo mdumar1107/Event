@@ -11,6 +11,7 @@ import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js"; // Imported analytics routes
+import subscriptionRoutes from "./routes/subscriptionRoutes.js"; // Imported subscription routes
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true })); // Adjust
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // To handle form submissions
 app.use("/tickets", express.static(path.join(__dirname, "tickets")));
+app.use("/api", subscriptionRoutes); // Added subscription API routes
 
 // Serve uploaded images
 app.use("/uploads", express.static("uploads")); // Makes /uploads public
