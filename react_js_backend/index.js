@@ -12,6 +12,7 @@ import eventRoutes from "./routes/eventRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js"; // Imported analytics routes
 import subscriptionRoutes from "./routes/subscriptionRoutes.js"; // Imported subscription routes
+import messageRoutes from "./routes/messageRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -30,6 +31,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // To handle form submissions
 app.use("/tickets", express.static(path.join(__dirname, "tickets")));
 app.use("/api", subscriptionRoutes); // Added subscription API routes
+app.use("/api/messages", messageRoutes); // Added message API routes
+
 
 // Serve uploaded images
 app.use("/uploads", express.static("uploads")); // Makes /uploads public

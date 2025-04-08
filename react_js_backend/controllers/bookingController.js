@@ -1,4 +1,5 @@
 import Booking from "../models/booking.js"; // Import Booking model
+import Message from "../models/message.js"; // ✅ Import message model
 
 export const bookEvent = async (req, res) => {
   try {
@@ -35,6 +36,12 @@ export const bookEvent = async (req, res) => {
     });
 
     await newBooking.save(); // ✅ Ensures it saves in MongoDB
+
+    // ✅ Add a system message to the messages collection
+    await Message.create({
+      text: `✅ New booking by ${userFullName} for ${numTickets} ticket(s).`,
+      type: "info",
+    });
 
     res.status(201).json({
       success: true,

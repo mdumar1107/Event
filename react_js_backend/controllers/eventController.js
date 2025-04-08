@@ -1,4 +1,5 @@
 import Event from "../models/event.js";
+import Message from "../models/message.js"; // <-- ✅ Import Message model
 
 // 🔹 Create Event Controller
 export const CreateEvent = async (req, res) => {
@@ -34,6 +35,13 @@ export const CreateEvent = async (req, res) => {
     });
 
     await newEvent.save();
+
+     // ✅ Add message to messages collection
+     await Message.create({
+      text: `🎉 Event "${title}" created successfully!`,
+      type: "success",
+    });
+    
     res.status(201).json({ message: "Event created successfully!", event: newEvent });
 
   } catch (error) {
