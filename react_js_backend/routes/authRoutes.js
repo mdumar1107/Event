@@ -2,6 +2,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import authMiddleware from '../middlewares/authMiddleware.js'; // Add this middleware
 import { signup, login, getUser, logout, forgotPassword, resetPassword } from '../controllers/authController.js';
+import {getProfile,updateProfile,changePassword } from '../controllers/authController.js';
 
 // 🔹 Import additional middleware & event controller
 import authenticateUser from '../middlewares/authMiddleware.js'; 
@@ -34,4 +35,8 @@ router.post("/reset-password/:token", resetPassword);
 // 🔹 Protect the create event route (without modifying your existing routes)
 router.post("/create-event", authenticateUser, CreateEvent);
 
+// Protect the event routes with authentication middleware
+router.get('/profile', authMiddleware, getProfile);
+router.put('/profile', authMiddleware, updateProfile);
+router.put('/change-password', authMiddleware, changePassword);
 export default router;
