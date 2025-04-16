@@ -5,6 +5,7 @@ import axios from "axios";
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import EventCard from "../Components/EventCard";
+import TrendingColleges from "../Components/TrendingCollege";
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
@@ -59,12 +60,6 @@ const HomePage = () => {
   });
   
   
-  
-  
-  
-  
-  
-
   return (
     <div className="font-sans bg-background">
       {/* Header */}
@@ -251,83 +246,14 @@ const HomePage = () => {
 
 
 {/* Trending Colleges Section */}
-<section className="py-12 bg-background flex flex-col items-center mt-12 px-0">
-  <div className="max-w-[1200px] w-full mx-auto flex flex-col md:flex-row justify-between items-center mb-6 px-0">
-    {/* Title */}
-    <h2 className="text-3xl font-bold text-center md:text-left">
-      Trending <span className="text-primary">Colleges</span>
-    </h2>
-  </div>
+<div className="container mx-auto px-4">
+  {/* Other sections like search bar and events list */}
+  
+  {/* Trending Colleges Section */}
+  <TrendingColleges />
 
-  {/* Colleges Grid - Responsive */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-[1200px] mx-auto px-0 md:p-0">
-    {[        
-      {
-        id: 1,
-        name: "Harvard University",
-        location: "Cambridge, Massachusetts, UK",
-        image: "/harward.png",
-        rating: 4.8,
-      },
-      {
-        id: 2,
-        name: "Stanford University",
-        location: "Stanford, California, USA",
-        image: "/stanford.png",
-        rating: 4.9,
-      },
-      {
-        id: 3,
-        name: "Nanyang University",
-        location: "Nanyang Ave, Singapore",
-        image: "/nanyang.png",
-        rating: 4.7,
-      },
-    ].map((college) => (
-      <div key={college.id} className="bg-white shadow-lg rounded-xl overflow-hidden w-full h-auto sm:h-[495px] relative">
-        {/* Image Container */}
-        <div className="relative w-full">
-          <img
-            src={college.image}
-            alt={college.name}
-            className="w-full h-[331px] object-cover"
-          />
-
-          {/* Bottom Left - Rating */}
-          <div className="absolute left-[5%] bottom-[13%] sm:left-[26px] sm:bottom-[65px] md:left-[26px] md:bottom-[80px] bg-white flex items-center px-3 py-1 rounded-full shadow-md">
-            <span className="text-yellow-500 text-lg">⭐</span>
-            <span className="ml-1 font-semibold text-black">{college.rating}</span>
-          </div>
-
-          {/* Bottom Right - Exclusive Tag */}
-          <div className="absolute right-[5%] bottom-[23%] sm:left-[247.67px] sm:bottom-[65px] md:left-[270px] md:bottom-[80px] bg-black text-white px-3 py-1 text-sm rounded-full">
-            EXCLUSIVE
-          </div>
-        </div>
-
-        {/* College Content */}
-        <div className="p-5 text-left md:p-4">
-          <h3 className="text-2xl font-bold">{college.name}</h3>
-
-          {/* Location & Dotted Menu in the Same Line */}
-          <div className="flex justify-between items-center mt-4 sm:mt-12 md:mt-6">
-            <p className="text-black text-sm font-bold">{college.location}</p>
-
-            {/* Dotted Menu Button */}
-            <button className="text-black font-bold text-2xl">...</button>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-
-  {/* Load More Button */}
-  <div className="flex justify-center mt-8">
-    <button className="bg-primary text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300 ease-in-out hover:bg-purple-600 hover:scale-105">
-    <button onClick={() => window.location.href='/trendingcollege'} >Load More</button>
-    </button>
-  </div>
-</section>
+  {/* Maybe more sections like footer */}
+</div>
 
 
   {/* Our Blogs Section */}

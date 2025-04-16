@@ -35,6 +35,7 @@ root.render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/create-events" element={<CreateEvents />} />
         <Route path="/trendingcollege" element={<TrendingCollege />} />
+        <Route path="/trendingcollege/:id" element={<TrendingCollege />} />
         <Route path="/event" element={<Event />} />
         <Route path="/college-events" element={<CollegeEvents />} />
         <Route path="/all-events" element={<AllEvents />} />

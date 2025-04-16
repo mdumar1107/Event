@@ -1,112 +1,134 @@
-import React from "react";
-import Footer from "../Components/Footer";
-import Header from "../Components/Header";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import Header from "./Header";
+import Footer from "./Footer";
 
 const TrendingCollege = () => {
-  return (
-    <div className="font-sans bg-background">
-      {/* Header Section */}
-      <div>
-        <Header /> 
-      </div>
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const location = useLocation();
 
-      {/* Hero Section */}
-      <div className="w-full flex justify-center items-center mt-6">
-        <section 
-          className="w-[1320px] h-[596px] bg-cover bg-center flex justify-center items-center text-white text-4xl font-bold rounded-2xl"
-          style={{ backgroundImage: "url('/trndclg.jpg')" }}
-        >
-          
-        </section>
-      </div>
+  const colleges = [
+    {
+      id: 1,
+      name: "Harvard University",
+      location: "Cambridge, Massachusetts, UK",
+      image: "/harward.png",
+      rating: 4.8,
+    },
+    {
+      id: 2,
+      name: "Stanford University",
+      location: "Stanford, California, USA",
+      image: "/stanford.png",
+      rating: 4.9,
+    },
+    {
+      id: 3,
+      name: "Nanyang University",
+      location: "Nanyang Ave, Singapore",
+      image: "/nanyang.png",
+      rating: 4.7,
+    },
+  ];
 
-      {/* College Event Card Section */}
-      <div className="w-full flex justify-center items-center mt-6 mb-10 sm:mb-16">
-        <div className="w-[1200px]  bg-background  px-0 font-sans">
-          <h2 className="text-3xl font-bold mb-4">IIT Roorke</h2>
-          <p className="text-gray-500 mb-2 text-sm mt-6">
-            DesignHub organized a 3D Modeling Workshop using Blender on 16th February at 5 PM. 
-            The workshop taught participants the magic of creating stunning 3D models and animations using Blender. 
-            It was suitable for both beginners and experienced users. The event was followed by a blender-render competition, 
-            which added to the excitement.
-          </p>
-          <p className="text-gray-500 mb-2 text-sm">
-            DesignHub organized a 3D Modeling Workshop using Blender on 16th February at 5 PM. 
-            The workshop taught participants the magic of creating stunning 3D models and animations using Blender. 
-            It was suitable for both beginners and experienced users. The event was followed by a blender-render competition, 
-            which added to the excitement.
-          </p>
-          <p className="text-gray-500 mb-2 text-sm">
-            DesignHub organized a 3D Modeling Workshop using Blender on 16th February at 5 PM. 
-            The workshop taught participants the magic of creating stunning 3D models and animations using Blender. 
-            It was suitable for both beginners and experienced users. The event was followed by a blender-render competition, 
-            which added to the excitement.
-          </p>
-          <p className="text-gray-500 text-sm">
-            DesignHub organized a 3D Modeling Workshop using Blender on 16th February at 5 PM. 
-            The workshop taught participants the magic of creating stunning 3D models and animations using Blender. 
-            It was suitable for both beginners and experienced users. The event was followed by a blender-render competition, 
-            which added to the excitement.
-          </p>
-        </div>
-      </div>
+  // Get college either from state or fallback to finding by ID
+  const college = location.state || colleges.find(c => c.id === Number(id));
 
-      {/* Upcoming Events Section */}
-        <section className="p-8 bg-background flex flex-col items-center mt-10 sm:mt-16">
-            <div className="max-w-[1200px] w-full mx-auto flex flex-col sm:flex-col md:flex-row justify-between items-center mb-6 px-0">
-            {/* Title */}
-            <h2 className="text-3xl font-bold text-center md:text-left">
-                College <span className="text-primary">Events</span>
-            </h2>
-            </div>
+  if (id && college) {
+    // Detail view
+    return (
+      <>
+        <Header />
+        <div className="pt-20 px-4 max-w-6xl mx-auto bg-background">
+          <img
+            src={college.image}
+            alt={college.name}
+            className="w-full h-[400px] object-cover rounded-xl shadow-lg"
+          />
+          <div className="mt-8">
+            <h1 className="text-4xl font-bold mb-2">{college.name}</h1>
+            <p className="text-gray-600 mb-4">{college.location}</p>
+            <p className="text-lg text-gray-700 leading-relaxed">
+  <strong>About College:</strong> {college.name} stands as a beacon of academic excellence, 
+  attracting students from across the globe. Nestled in the heart of {college.location}, 
+  it offers a vibrant campus life surrounded by state-of-the-art facilities and inspiring architecture. 
+  The university is home to a distinguished faculty who are leaders in their fields. 
+  Students here are encouraged to think critically, collaborate, and innovate boldly. 
+  With a strong focus on research, the institution contributes significantly to global progress.
+</p>
 
+<p className="text-lg text-gray-700 leading-relaxed mt-4">
+  Beyond academics, {college.name} fosters a strong sense of community, cultural diversity, 
+  and holistic development. The university hosts a wide array of clubs, activities, and events 
+  that encourage students to explore their passions and enhance their personal growth. 
+  Whether it’s through sports, arts, or volunteer work, {college.name} ensures that every student’s 
+  experience is rich, fulfilling, and unforgettable.
+</p>
 
-      {/* Event Grid (2 Rows, 3 Columns) */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-[1200px] mx-auto px-0">
-      {[
-        { id: 1, image: "/img2.jpg" },
-        { id: 2, image: "/img1.jpg" },
-        { id: 3, image: "/img1.jpg" },
-        { id: 4, image: "/img1.jpg" },
-        { id: 5, image: "/img3.jpg" },
-        { id: 6, image: "/img2.jpg" },
-      ].map((event) => (
-        <div key={event.id} className="bg-white shadow-lg rounded-xl overflow-hidden p-5">
-          {/* Image Container */}
-          <div className="relative w-full flex justify-center">
-            <img
-              src={event.image}
-              alt={`Event ${event.id}`}
-              className="w-full h-[240px] object-cover rounded-lg"
-            />
-            <span className="absolute top-2 left-2 bg-white text-primary text-xs font-semibold px-2 py-1 rounded">
-              FREE
-            </span>
+<p className="text-lg text-gray-700 leading-relaxed mt-4">
+  Graduates of {college.name} go on to become influential leaders, entrepreneurs, 
+  and change-makers in various fields. The institution’s global network of alumni 
+  provides invaluable support, mentoring, and career opportunities. Choosing {college.name} 
+  means stepping into a legacy of brilliance and opportunity, where the future is shaped by the 
+  innovative and visionary minds of its students.
+</p>
+
           </div>
-
-          {/* Event Content (Kept Inside the Card) */}
-          <div className="mt-4 text-left space-y-2">
-            <h3 className="text-md font-semibold leading-tight text-black">
-              BestSeller Book Bootcamp - Write, Market & Publish Your Book - Lucknow
-            </h3>
-            <p className="text-xs font-medium text-primary leading-[2.5]">
-              Saturday, March 18, 9:30PM
-            </p>
-            <p className="text-xs text-gray-600">
-              ONLINE EVENT - Attend anywhere
-            </p>
-          </div>
+          <button
+            onClick={() => navigate("/")}
+            className="mt-8 bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90"
+          >
+            ← Back
+          </button>
         </div>
-      ))}
-    </div>
-  </section>
-
-      {/* Footer Section */}
-      <div>
         <Footer />
+      </>
+    );
+  }
+
+  // Default: List view
+  return (
+    <section className="py-12 bg-background flex flex-col items-center mt-12 px-4">
+      <div className="max-w-[1200px] w-full mx-auto flex flex-col md:flex-row justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-center md:text-left">
+          Trending <span className="text-primary">Colleges</span>
+        </h2>
       </div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-[1200px] mx-auto">
+        {colleges.map((college) => (
+          <div
+            key={college.id}
+            className="bg-white shadow-lg rounded-xl overflow-hidden w-full h-auto relative cursor-pointer"
+            onClick={() =>
+              navigate(`/trendingcollege/${college.id}`, { state: college })
+            }
+          >
+            <div className="relative w-full">
+              <img
+                src={college.image}
+                alt={college.name}
+                className="w-full h-[331px] object-cover"
+              />
+              <div className="absolute left-5 bottom-20 bg-white flex items-center px-3 py-1 rounded-full shadow-md">
+                <span className="text-yellow-500 text-lg">⭐</span>
+                <span className="ml-1 font-semibold text-black">{college.rating}</span>
+              </div>
+              <div className="absolute right-5 bottom-32 bg-black text-white px-3 py-1 text-sm rounded-full">
+                EXCLUSIVE
+              </div>
+            </div>
+            <div className="p-5 text-left">
+              <h3 className="text-2xl font-bold">{college.name}</h3>
+              <div className="flex justify-between items-center mt-4">
+                <p className="text-black text-sm font-bold">{college.location}</p>
+                <button className="text-black font-bold text-2xl">...</button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+    </section>
   );
 };
 
