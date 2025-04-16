@@ -19,6 +19,7 @@ import DashEvents from './Components/DashEvents'; // Import the Dashboard compon
 import ForgotPassword from './Components/ForgotPassword';
 import ResetPassword from   './Components/ResetPassword';
 import EventDetails from './Components/EventDetails';
+import BlogPage from './Components/BlogPage'; // Import the BlogPage component
 
 import reportWebVitals from './reportWebVitals';
 
@@ -48,6 +49,7 @@ root.render(
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/event/:id" element={<EventDetails />} />
+        <Route path="/blog/:id" element={<BlogPage />} />
       </Routes>
     </Router>
   </React.StrictMode>

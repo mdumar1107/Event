@@ -257,50 +257,72 @@ const HomePage = () => {
 
 
   {/* Our Blogs Section */}
-  <section className="py-12 px-0 bg-background flex flex-col items-center mt-12">
-    <div className="max-w-[1200px] w-full mx-auto flex flex-col sm:flex-col md:flex-row justify-between items-center mb-6 px-0 sm:px-0 md:px-0">
-      {/* Title */}
-      <h2 className="text-3xl font-bold text-center md:text-left">
-        Our <span className="text-primary">Blogs</span>
-      </h2>
-    </div>
+<section className="py-12 px-0 bg-background flex flex-col items-center mt-12">
+  <div className="max-w-[1200px] w-full mx-auto flex flex-col sm:flex-col md:flex-row justify-between items-center mb-6 px-0 sm:px-0 md:px-0">
+    {/* Title */}
+    <h2 className="text-3xl font-bold text-center md:text-left">
+      Our <span className="text-primary">Blogs</span>
+    </h2>
+  </div>
 
-  {/* Event Grid (2 Rows, 3 Columns) */}
+  {/* Blog Grid (3 Columns) */}
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-[1200px] mx-auto px-0">
-      {[
-        { id: 1, image: "/img2.jpg" },
-        { id: 2, image: "/img1.jpg" },
-        { id: 3, image: "/img1.jpg" },
-      ].map((event) => (
-        <div key={event.id} className="bg-white shadow-lg rounded-xl overflow-hidden p-5">
+    {[
+      {
+        id: 1,
+        image: "/img2.jpg",
+        title: "10 Tips for Organizing Successful College Events",
+        date: "March 18, 9:30PM",
+        type: "FREE"
+      },
+      {
+        id: 2,
+        image: "/img1.jpg",
+        title: "The Ultimate Guide to Virtual Event Planning",
+        date: "April 5, 2:00PM",
+        type: "PREMIUM"
+      },
+      {
+        id: 3,
+        image: "/img3.jpg", // Make sure you have img3.jpg in your public folder
+        title: "How to Market Your Event on a Student Budget",
+        date: "May 12, 10:00AM",
+        type: "FREE"
+      }
+    ].map((blog) => (
+      <Link to={`/blog/${blog.id}`} key={blog.id} className="hover:shadow-xl transition-shadow duration-300">
+        <div className="bg-white shadow-lg rounded-xl overflow-hidden p-5 h-full">
           {/* Image Container */}
           <div className="relative w-full flex justify-center">
             <img
-              src={event.image}
-              alt={`Event ${event.id}`}
+              src={blog.image}
+              alt={`Blog ${blog.id}`}
               className="w-full h-[240px] object-cover rounded-lg"
             />
-            <span className="absolute top-2 left-2 bg-white text-primary text-xs font-semibold px-2 py-1 rounded">
-              FREE
+            <span className={`absolute top-2 left-2 text-xs font-semibold px-2 py-1 rounded ${
+              blog.type === "FREE" ? "bg-white text-primary" : "bg-primary text-white"
+            }`}>
+              {blog.type}
             </span>
           </div>
 
-          {/* Event Content (Kept Inside the Card) */}
+          {/* Blog Content */}
           <div className="mt-4 text-left space-y-2">
             <h3 className="text-md font-semibold leading-tight text-black">
-              BestSeller Book Bootcamp - Write, Market & Publish Your Book - Lucknow
+              {blog.title}
             </h3>
             <p className="text-xs font-medium text-primary leading-[2.5]">
-              Saturday, March 18, 9:30PM
+              Published on {blog.date}
             </p>
             <p className="text-xs text-gray-600">
-              ONLINE EVENT - Attend anywhere
+              {blog.type === "FREE" ? "FREE RESOURCE" : "PREMIUM CONTENT"}
             </p>
           </div>
         </div>
-      ))}
-    </div>
-  </section>
+      </Link>
+    ))}
+  </div>
+</section>
 
 
 
